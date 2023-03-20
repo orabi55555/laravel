@@ -1,0 +1,1 @@
+<a href="{{$link}}" type={{$type}} class="btn btn-{{$type}}">{{$slot}}</a>
