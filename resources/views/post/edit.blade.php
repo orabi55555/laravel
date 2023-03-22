@@ -5,20 +5,26 @@
 
 @section('content')
 
-<form method="POST" action="{{route('posts.store')}}">
+<form method="POST" action="{{ route('posts.update', ['id' => $post->id]) }}">
   @csrf  
+  @method('PUT')
   <div class="form-group">
     <label class="mt-2">Title</label>
-    <input  class="form-control" value=<?php echo $post['title']?>></input>
+    <input name="title"  class="form-control" value={{$post->title}}>
     
   </div>
   <div class="form-group">
     <label class="mt-2">Description</label>
-    <input class="form-control"  value=<?php echo $post['description']?>>
+    <input name="description" class="form-control"  value={{$post->description}}>
   </div>
   <div class="form-group ">
   <label class="mt-2">Post Creator</label>
-    <input class="form-control"  value="{{$post['posted_by']}}">
+  <select name="post_creator" class="form-control">
+    @foreach ($users as $user)
+<option value="{{$user->id}}" >{{$user->name}}</option>
+@endforeach
+    
+  </select>
   </div>
   
   <button type="submit" class="btn btn-primary mt-3">Submit</button>

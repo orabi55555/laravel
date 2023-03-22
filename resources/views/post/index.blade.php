@@ -20,20 +20,25 @@
         <tbody>
 
         @foreach($posts as $post)
+      
             <tr>
-                <td>{{$post['id']}}</td>
-                <td>{{$post['title']}}</td>
-                <td>{{$post['posted_by']}}</td>
-                <td>{{$post['created_at']}}</td>
+                <td>{{$post->id}}</td>
+                <td>{{$post->title}}</td>
+                <td>{{$post->user->name}}</td>
+                <td>{{date('Y-m-d', strtotime($post->created_at))}}</td>
                 <td>
-                    <!-- <a href="{{route('posts.show', $post['id'])}}" class="btn btn-info">View</a>
-                    <a href="{{route('posts.edit', $post['id'],'edit')}}" class="btn btn-primary">Edit</a>
+                    <!-- <a href="{{route('posts.show', $post->id)}}" class="btn btn-info">View</a>
+                    <a href="{{route('posts.edit', $post->id,'edit')}}" class="btn btn-primary">Edit</a>
                     <a href="#" class="btn btn-danger">Delete</a>
                  
                      -->
+                     <form action="{{ route('posts.destroy', $post->id) }}" method="POST">
+                        @csrf
+                        @method('DELETE')
                      <x-button type="info" :link="route('posts.show',$post['id'])" >view</x-button>
                       <x-button type="primary" :link="route('posts.edit',$post['id'],'edit')" >edit</x-button>
-                      <x-button type="danger">delete</x-button>
+                      <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this post?')">delete</button>
+                     </form>
                 </td>
             </tr>
         @endforeach
@@ -42,7 +47,10 @@
 
         </tbody>
     </table>
-
+    <div class="d-flex ">
+        {!! $posts->links() !!}
+    </div>
 @endsection
 
 
+ 
