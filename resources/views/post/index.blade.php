@@ -35,6 +35,7 @@
                      <form action="{{ route('posts.destroy', $post->id) }}" method="POST">
                         @csrf
                         @method('DELETE')
+
                      <x-button type="info" :link="route('posts.show',$post['id'])" >view</x-button>
                       <x-button type="primary" :link="route('posts.edit',$post['id'],'edit')" >edit</x-button>
                       <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this post?')">delete</button>
@@ -47,8 +48,8 @@
 
         </tbody>
     </table>
-    <div class="d-flex ">
-        {!! $posts->links() !!}
+    <div class="d-flex justify-content-center">
+        {!! $posts->links('pagination::bootstrap-5') !!}
     </div>
 @endsection
 

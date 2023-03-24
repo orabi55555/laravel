@@ -40,7 +40,9 @@ class PostController extends Controller
 
     public function show($id)
     {$post = Post::with('user')->find($id);
-        return view('post.show', compact('post'));
+        $comments = $post->comments;
+        
+        return view('post.show',['post'=>$post,'comments'=>$comments]);
     }
 
 
@@ -52,14 +54,11 @@ class PostController extends Controller
     }
     public function store(Request $request)
     {
-        $data= $request->all();
-        $title= request()->title;
-        $description= request()->description;
-        $postCreator= request()->post_creator;
+      
         Post::create([
-            'title'=>$title,
-            'description'=>$description,
-            'user_id' => $postCreator,
+            'title'=>request()->title,
+            'description'=>request()->description,
+            'user_id' => request()->post_creator,
         ]);
         return redirect()->route('posts.index');
     }
@@ -69,6 +68,7 @@ class PostController extends Controller
     {
 
         $post = Post::find($id);
+       
         $users = User::all();
 
 
@@ -96,6 +96,7 @@ class PostController extends Controller
     public function destroy($id)
     {
         $post = Post::find($id);
+        $post->comments()->delete();
         $post->delete();
 
         return redirect()->route('posts.index')

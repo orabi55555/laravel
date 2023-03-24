@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\Comment;
 use App\Models\Post;
 use Illuminate\Http\Request;
 
@@ -11,13 +11,30 @@ class CommentController extends Controller
     //
     
     public function store(Request $request)
-  {
-    // $post = Post::find($request->post);
-    $post = Post::findOrFail($request->post);
+    {
+     
 
-    $post->comments()->create($request->all());
-    
-    return redirect()->back()->withMessage('Profile saved!');
-    
-  }
+    Comment::create([
+        'comment'=> $request->body,
+        'commentable_type'=> $request->commentable_type,
+        'commentable_id' => $request->commentable_id,
+    ]);
+    return redirect()->back();
+    }
+
+    // public function edit(Request $request, $id)
+    // {
+    //     $comment = Comment::findOrFail($id);
+    //     $comment->body = $request->body;
+    //     $comment->save();
+    //     return back()->with('success','comment updated successfully!');
+    // }
+
+
+    public function destroy($id)
+    {  
+        $comment = Comment::find($id)->delete();
+
+        return redirect()->back();
+    }
 }

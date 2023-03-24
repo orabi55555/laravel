@@ -15,7 +15,7 @@
   </div>
   <div class="form-group">
     <label class="mt-2">Description</label>
-    <input name="description" class="form-control"  value={{$post->description}}>
+    <input name="description" class="form-control"  value="{{$post->description}}">
   </div>
   <div class="form-group ">
   <label class="mt-2">Post Creator</label>
