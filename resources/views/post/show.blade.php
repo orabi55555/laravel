@@ -3,29 +3,39 @@
 @section('title') Show @endsection
 
 @section('content')
-    <div class="card mt-5">
+    <div class="card m-3">
         <div class="card-header">
             Post Info
         </div>
         <div class="card-body">
             <h5 class="card-title">Title: {{$post['title']}}</h5>
             <p class="card-text">Description: {{$post['description']}}</p>
+            {{-- <img src="{{asset($post->image)}}"> --}}
+            {{-- @dd(Storage::url($post->image),$post->image,asset($post->image)); --}}
+            @if($post->image !=null)
+            <img src="{{'/'.'storage/'.$post->image}}" width="250" alt=""/>
+            @endif
         </div>
     </div>
 
-    <div class="card mt-5">
+    <div class="card m-3">
         <div class="card-header">
             Post Creator Info
         </div>
         <div class="card-body">
             <p class="card-title"><span class="fw-bold">Author:</span> {{ optional($post->user)->name ?? 'Not Found' }}</h5>
+             
+              <p class="card-title"><span class="fw-bold">Tags:
+                @foreach($post->tags as $tag)
+                </span> {{$tag->name }}</h5>
+                @endforeach
             <p class="card-text"><span class="fw-bold">Email:</span> {{optional($post->user)->email ?? 'Not Found'}}</p>
                 <p class=" text-danger card-text"><span class="fw-bold">created At:</span> {{ $post->created_at->format('l jS \\of F Y h:i:s A') }}</h5>
         </div>
     </div>
     <div>
      
-      <div class="card my-3">
+      <div class="card m-3">
         <div class="card-header">
           Comments
         </div>
@@ -53,7 +63,7 @@
       </div>
       
           
-        <div class="card mt-3">
+        <div class="card m-3">
           <div class="card-header">
             add new comment
           </div>

@@ -1,40 +1,20 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Http\Requests\StorePostRequest;
+use App\Http\Requests\UpdatePostRequest;
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\File;
 use App\Models\User;
+use Illuminate\Support\Facades\Storage;
+
 
 class PostController extends Controller
 {
     public function index()
     {  $posts = Post::with('user')->paginate(4);
         return view('post.index',['posts' => $posts]);
-        // dd($allPosts);
-        // [
-        //     [
-        //         'id' => 1,
-        //         'title' => 'Laravel',
-        //         'posted_by' => 'Ahmed',
-        //         'created_at' => '2022-08-01 10:00:00'
-        //     ],
-
-        //     [
-        //         'id' => 2,
-        //         'title' => 'PHP',
-        //         'posted_by' => 'Mohamed',
-        //         'created_at' => '2022-08-01 10:00:00'
-        //     ],
-
-        //     [
-        //         'id' => 3,
-        //         'title' => 'Javascript',
-        //         'posted_by' => 'Ali',
-        //         'created_at' => '2022-08-01 10:00:00'
-        //     ],
-        // ];
-
-
         return view('post.index', ['posts' => $allPosts,'users'=> $users]);
     }
 
@@ -52,14 +32,21 @@ class PostController extends Controller
 
         return view('post.create',['users'=> $users]);
     }
-    public function store(Request $request)
-    {
-      
-        Post::create([
+    public function store(StorePostRequest $request)
+    {   
+        $image = $request->file('image')->store('images',['disk' => "public"]);
+        
+        
+        $post=Post::create([
             'title'=>request()->title,
             'description'=>request()->description,
             'user_id' => request()->post_creator,
+            'image' =>$image,
+            
         ]);
+        $tags = explode(",", $request->tags);
+        $post->tags=$tags;
+        $post->syncTags($tags);
         return redirect()->route('posts.index');
     }
 
@@ -76,13 +63,24 @@ class PostController extends Controller
 
         
     }
-    public function update(Request $request, $id)
+    public function update(UpdatePostRequest $request, $id)
     {
         $post = Post::find($id);
 
         $post->title = $request->input('title');
         $post->description =$request->input('description');
         $post->user_id = $request->input('post_creator');
+        $tags=explode(",", $request->input('tags'));
+        $post->syncTags($tags);
+        
+        if($request->hasFile("image")){
+
+            Storage::disk("public")->delete($post->image);
+      
+            $image = $request->file('image')->store('images',['disk' => "public"]);
+            $post->image=$image;
+      
+          }
         $post->update();
     
         // $updatedPost = Post::with('user')->find($id);     
@@ -97,6 +95,7 @@ class PostController extends Controller
     {
         $post = Post::find($id);
         $post->comments()->delete();
+        Storage::disk("public")->delete($post->image);
         $post->delete();
 
         return redirect()->route('posts.index')
