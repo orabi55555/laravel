@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\File;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
+use App\Jobs\PruneOldPostsJob;
 
 
 class PostController extends Controller
@@ -100,6 +101,10 @@ class PostController extends Controller
 
         return redirect()->route('posts.index')
                          ->with('success', 'Post deleted successfully.');
+    }
+    public function removePosts()
+    {
+      PruneOldPostsJob::dispatch();
     }
 
     
